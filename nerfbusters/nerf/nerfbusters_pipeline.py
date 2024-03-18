@@ -32,6 +32,7 @@ from nerfbusters.utils.visualizations import get_3Dimage_fast
 from nerfbusters.nerf.nerfbusters_utils import random_train_pose
 from torchtyping import TensorType
 from typing_extensions import Literal
+from torch.cuda.amp.grad_scaler import GradScaler
 
 from nerfstudio.data.scene_box import SceneBox
 from nerfstudio.engine.callbacks import (
@@ -298,8 +299,9 @@ class NerfbustersPipeline(VanillaPipeline):
         test_mode: Literal["test", "val", "inference"] = "val",
         world_size: int = 1,
         local_rank: int = 0,
+        grad_scaler: Optional[GradScaler] = None,
     ):
-        super().__init__(config, device, test_mode, world_size, local_rank)
+        super().__init__(config, device, test_mode, world_size, local_rank, grad_scaler)
 
         # initialize visibility "field"
         cameras = self.datamanager.train_dataparser_outputs.cameras.to(self.device)
